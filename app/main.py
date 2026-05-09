@@ -9,12 +9,10 @@ async def health_check():
     # Required for the evaluator to know your service is awake
     return {"status": "ok"}
 
-@app.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
+@app.post("/chat")
+async def chat(request: ChatRequest):
     try:
-        # Pass the stateless message array directly to the brain
-        response = await process_chat(request.messages)
-        return response
+        return await process_chat(request.messages)
     except Exception as e:
-        # Prevent the server from crashing if the LLM hiccups
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"ERROR IN CHAT: {e}") # This will show up in Render logs
+        raise e
